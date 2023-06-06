@@ -5,23 +5,23 @@ const client = new Client();
 
 new Client({
   puppeteer: {
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: ["--no-sandbox"],
   },
 });
 
-client.on("qr", (qr) => {
+Client.on("qr", (qr) => {
   qrcode.generate(qr, { small: true });
 });
 
-client.on("ready", () => {
+Client.on("ready", () => {
   console.log("Client is ready!");
 });
 
-client.on("message", (message) => {
+Client.on("message", (message) => {
   console.log(message);
   if (message.body === "!ping") {
     message.reply("pong");
   }
 });
 
-client.initialize();
+Client.initialize();
