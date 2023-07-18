@@ -10,37 +10,25 @@ const openai = new OpenAIApi(
   })
 );
 
-// Menghasilkan dan menampilkan QR code untuk menghubungkan WhatsApp Web
+new Client({
+  puppeteer: {
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  },
+});
+
 client.on("qr", (qr) => {
   qrcode.generate(qr, { small: true });
 });
 
 client.on("ready", () => {
-  console.log("Client siap!");
+  console.log("Client is ready!");
 });
 
-client.on("message", async (message) => {
-  if (message.body.includes("/ask")) {
-    const pesan = message.body.replace("/ask", "").trim();
-    const chatResponse = await getChatCompletion(pesan);
-    await message.reply(chatResponse);
-  } else {
-    message.reply("masukkan /ask sebelum pertanayaan");
+client.on("message", (message) => {
+  console.log(message);
+  if (message.body === "!ping") {
+    message.reply("pong");
   }
 });
 
 client.initialize();
-
-const getChatCompletion = async (pesan) => {
-  try {
-    const response = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: pesan }],
-    });
-
-    return response.data.choices[0].message.content;
-  } catch (error) {
-    console.error("Error:", error);
-    return null;
-  }
-};
